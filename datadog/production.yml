@@ -1,0 +1,57 @@
+# Service Level Dashboard Configuration
+dashboard:
+  type: "TimeBoard"
+  title: "Datadog - Dashboard Example"
+  description: "Example Dashboard"
+
+  templateVariables:
+    - name: "ENVIRONMENT"
+      prefix: "production"
+      
+  # Platform Level Template graphs to automatically add to the dashboard
+  templates:
+    - type: platform
+      key: service_default  #Currently the only template available provides basic graphs
+
+#  # Custom Graphs for this project
+#  graphs:
+#    - title: "Service: Container CPU Usage %"
+#      definition:  
+#        viz: timeseries
+#        requests: 
+#          - aggregator: avg
+#            conditional_formats: []
+#            q: "avg:docker.cpu.usage{$SYSTEM} * 100" # CPU Usage %
+#            type: line
+
+# Monitors Array with all monitors to syncronize with Datadog
+# Monitors are just exported monitor definitions that are YAML-ized
+#monitors:
+#  - key: avg:docker.cpu.usage  # key is required and used to match monitors with template file
+#    notify: # you may specify a list of @notifiers to send this monitor alert to. Will be appened to message value.
+#      - "@opsgenie-microservice-platform" 
+#
+#    # all other properties are standard datadog monitor values
+#    # you can export a monitor as JSON and YAML-ize the result 
+#    name: Example: hello-flipp-platform cpu usage
+#    type: metric alert
+#    query: avg(last_5m):avg:docker.cpu.usage{system:platform-dashboard-builder} > 75
+#    message: THIS IS A TEST MONITOR
+#    tags:
+#      - custom:tags
+#    options:
+#      timeout_h: 0
+#      notify_no_data: false
+#      no_data_timeframe: 10
+#      notify_audit: false
+#      require_full_window: true
+#      new_host_delay: 300
+#      include_tags: false
+#      escalation_message: ''
+#      locked: false
+#      renotify_interval: '0'
+#      evaluation_delay: ''
+#      thresholds:
+#        critical: 75
+#        warning: 70
+    

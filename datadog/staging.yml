@@ -1,0 +1,26 @@
+# Service Level Dashboard Configuration
+dashboard:
+  type: "TimeBoard"
+  title: "Datadog Seed Example - Staging"
+  description: "Example Dashboard"
+
+  templateVariables:
+    - name: "ENVIRONMENT"
+      prefix: "production"
+
+  # Platform Level Template graphs to automatically add to the dashboard
+  templates:
+    - type: platform
+      key: service_default  #Currently the only template available provides basic graphs
+  
+#  graphs:
+#    - title: "Dashboard Updates"
+#      ## get the number of Dashboard Updates happening in the current time period
+#      definition:  
+#        viz: query_value
+#        status: done
+#        requests:
+#        - q: avg:datadog.timeboard.updated{$SYSTEM,$ENVIRONMENT}.as_count()
+#          type: bars
+#          conditional_formats: []
+#          aggregator: sum
