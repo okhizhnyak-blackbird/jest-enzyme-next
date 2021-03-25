@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "echo \"Error: no test specified\""
   },
   "dependencies": {
     "next": "10.0.9",

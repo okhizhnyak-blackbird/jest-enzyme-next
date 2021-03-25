@@ -1,12 +1,12 @@
-FROM 421990735784.dkr.ecr.us-east-1.amazonaws.com/flipp/node-base:8
-#FROM 421990735784.dkr.ecr.us-east-1.amazonaws.com/flipp/ruby-base:2.4
-#FROM 421990735784.dkr.ecr.us-east-1.amazonaws.com/flipp/java-base:8
+FROM node:14
 
-#Copy Application code to app folder
-COPY . /var/app/
+WORKDIR /usr/src/app
+COPY . /usr/src/app
 
-#Expose port 3000 which the app runs on
+RUN npm install --loglevel notice
+RUN npm --prefix /usr/src/app run build
+
+ENV NODE_ENV production
+
+CMD [ "npm", "start" ]
 EXPOSE 3000
-
-#Start Command
-CMD ["npm", "start"]

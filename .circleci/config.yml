@@ -1,7 +1,6 @@
 defaults: &defaults
-  working_directory: /tmp/build
+  working_directory: ~/workspace
   docker:
-      #- image: 421990735784.dkr.ecr.us-east-1.amazonaws.com/ci-build-environment:ruby-2.4
       - image: 421990735784.dkr.ecr.us-east-1.amazonaws.com/ci-build-environment:node-8
         aws_auth:
           aws_access_key_id: $AWS_ACCESS_KEY_ID
@@ -9,54 +8,10 @@ defaults: &defaults
 
 version: 2
 jobs:
-  build:
-    <<: *defaults
-    steps:
-      - checkout
-      - run: chmod +x ./deploy/npm-config.sh && ./deploy/npm-config.sh
-
-      # see if we have the node_modules cached already
-      - restore_cache:
-          key: 'v1-node-module-cache-{{ .Branch }}-{{ checksum "package.json" }}'
-
-      - run: npm install
-
-      # save the node_modules cache
-      - save_cache:
-          key: 'v1-node-module-cache-{{ .Branch }}-{{ checksum "package.json" }}'
-          paths:
-            - /tmp/build/node_modules
-
-      - persist_to_workspace:
-          root: /tmp/build
-          paths:
-            - .
-
-  # For Ruby or Scala, refer to doc in https://github.com/wishabi/one-for-all
-  one-for-all:
-    <<: *defaults
-    steps:
-    - attach_workspace:
-        at: /tmp/build
-    - run:
-        name: execute one-for-all
-        command: |
-          chmod +x ./one-for-all/one-for-all.sh
-          ./one-for-all/one-for-all.sh
-
-  test:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /tmp/build
-      - run:
-          command: npm test
-
   deploy-staging:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: /tmp/build
+      - checkout
       - run:
           command: ls -l
       - setup_remote_docker   # We will be building a docker image
@@ -64,12 +19,13 @@ jobs:
           command: chmod +x ./deploy/staging.sh
       - run:
           command: ./deploy/staging.sh
+      - run:
+          command: npm run test
 
   deploy-prod:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: /tmp/build
+      - checkout
       - run:
           command: ls -l
       - setup_remote_docker   # We will be building a docker image
@@ -77,27 +33,20 @@ jobs:
           command: chmod +x ./deploy/production.sh
       - run:
           command: ./deploy/production.sh
+      - run:
+          command: npm run test
 
 workflows:
   version: 2
+
   build_and_test:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
-      - one-for-all:
-          requires:
-            - test
       - deploy-staging:
-          requires:
-            - test
           filters:
             branches:
-              only: staging
+              only:
+                - develop
       - deploy-prod:
-          requires:
-            - test
           filters:
             branches:
               only: master
