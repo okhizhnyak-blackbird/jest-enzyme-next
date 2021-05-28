@@ -32,3 +32,11 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+.idea
+
+.jest
+
+.dist
+
+.next-env.d.ts
